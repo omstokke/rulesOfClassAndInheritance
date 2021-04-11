@@ -1,4 +1,4 @@
-# rulesOfInheritance-aStoryOfClass
+# rulesOfInheritance-aStoryOfClasses
 It goes: Life, domain, kingdom, phylum, class, order, family, genus, and species
 
 Same rules as before: Copy instructions and code, smaller prompts and challenges from the tutorials - but do not copy blindly larger construction and projects. As long as the basic functions and building blocks are understood, use tutorials as inspiration, but don't copy the same scope and result (try to expand).
