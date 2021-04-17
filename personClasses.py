@@ -6,19 +6,6 @@ class Person:
 
     evo_stage = 0
     action_count = 0
-    evo_construct = []
-    evo_stages = {
-        0: Person.from_list(evo_construct)
-        1: Infant.from_list(evo_construct)
-        2: Toddler.from_list(evo_construct)
-        3: Kid.from_list(evo_construct)
-        4: Tween.from_list(evo_construct)
-        5: Youth.from_list(evo_construct)
-        6: Adult_Functioning.from_list(evo_construct)
-        7: Alcoholic_Functioning.from_list(evo_construct)
-        8: Oldster.from_list(evo_construct)
-        9: Demented_Old_Bat.from_list(evo_construct)
-    }
     
     def __init__(self, name, occupation, hobby):
         self.name = name
@@ -26,7 +13,6 @@ class Person:
         self.hobby = [hobby.lower()]
         self.evo_points = 0
         self.evo_check = 50
-        cls.evo_construct = [name, occupation, hobby.lower()]
 
     def __init_subclass__(cls):
         cls.evo_stage += 1
@@ -42,7 +28,7 @@ class Person:
     def incr_evo_points(self, amount):
         self.evo_points += amount
         if self.evo_points >= self.evo_check:
-            pass
+            print(self.__class__.subclasses())
 
     def incr_action_count(self, amount):
         self.__class__.action_count += amount
@@ -81,7 +67,7 @@ class Infant(Person):
         """)
 
     def shits_and_giggles(self):
-        if randint(0, self.__class__.evo_points*2) > self.__class__.evo_points:
+        if randint(0, self.evo_points*2) > self.evo_points:
             self.incr_evo_points(10)
             self.incr_action_count(2)
             print(f"""
@@ -104,8 +90,8 @@ class Toddler(Infant):
     def __init__(self, name, occupation, hobby):
         super().__init__(name, occupation, hobby)
         self.evo_check = 80
-
-    bribed = 0
+        self.bribed = 0
+    
 
     def bribe_with_choc(self):
         self.incr_evo_points(10)
@@ -126,7 +112,7 @@ class Toddler(Infant):
 
     #Shits and giggles
     def shits_and_giggles(self):
-        if (randint(0, self.__class__.evo_points*2) > self.__class__.evo_points) and self.__class__.bribed < 3:
+        if (randint(0, self.evo_points*2) > self.evo_points) and self.bribed < 3:
             self.incr_evo_points(5)
             self.incr_action_count(2)
             print(f"""
@@ -204,7 +190,7 @@ class EmoTeen(Kid):
         for char in message:
             if char == " ":
                 output += " "          
-            elif self.__class__.evo_points >= (randint(0, self.__class__.evo_points * 2)):
+            elif self.evo_points >= (randint(0, self.evo_points * 2)):
                 output += char.lower()
             else:
                 output += char.upper()
