@@ -41,12 +41,6 @@ class Person:
     def decrease_action_count(cls, amount):
         cls.action_count -= amount
     
-    # Alternative constructor with string/.csv
-    @classmethod
-    def from_string(cls, stringperson):
-        name, occupation, hobby = stringperson.split(",")
-        return cls(name, occupation, hobby)
-    
     #Alternative constructor from array-list
     @classmethod
     def from_list(cls, personlist):
@@ -161,7 +155,6 @@ class Kid(Toddler):
         """)
 
 
-
 class EmoTeen(Kid):
    
     def cry(cls, self):
@@ -188,12 +181,21 @@ class EmoTeen(Kid):
                 output += char.upper()
         return output
 
-    def teen_responds_to_important_things():
-        pass
+    def teen_responds_to_important_things(cls):
+        cls.incr_class_token(5)
+        cls.incr_action_count(2)
+        print(f"""
+        Who even ARE YOU?!
+
+        Don't you know that {choice(table.animals_table).lower()} in {choice(table.smartass_table)} are {choice(table.adjectives_table2)} due to {choice(table.table_of_bad_things)}?
+        """)
 
 
 class Youth(EmoTeen):
-    pass
+    
+    def __init__(self, name, occupation, hobby, cigarettes):
+        super().__init__(name, occupation, hobby)
+        self.cigarettes = int(cigarettes)
 
 
 class Adult_Functioning(Youth):
