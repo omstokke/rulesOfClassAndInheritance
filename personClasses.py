@@ -44,7 +44,11 @@ class Person:
 
 
 class Infant(Person):
-    
+
+    def __init__(self, name, occupation, hobby):
+        super().__init__(name, occupation, hobby)
+        self.evo_check = 80
+        
     def cry(self):
         self.incr_class_token(5)
         self.incr_action_count(1)
@@ -82,7 +86,7 @@ class Toddler(Infant):
     
     def __init__(self, name, occupation, hobby):
         super().__init__(name, occupation, hobby)
-        evo_check = 80
+        self.evo_check = 80
 
     bribed = 0
 
@@ -131,7 +135,7 @@ class Kid(Toddler):
 
     def __init__(self, name, occupation, hobby):
         super().__init__(name, occupation, hobby)
-        evo_check = 80
+        self.evo_check = 80
 
     def talk(self):
         self.incr_action_count(5)
@@ -163,7 +167,7 @@ class EmoTeen(Kid):
 
     def __init__(self, name, occupation, hobby):
         super().__init__(name, occupation, hobby)
-        evo_check = 80
+        self.evo_check = 80
 
     def cry(self):
         self.incr_class_token(5)
@@ -203,28 +207,28 @@ class Youth(EmoTeen):
     
     def __init__(self, name, occupation, hobby):
         super().__init__(name, occupation, hobby)
-        evo_check = 80
+        self.evo_check = 80
 
 
 class Adult_Functioning(Youth):
 
     def __init__(self, name, occupation, hobby):
         super().__init__(name, occupation, hobby)
-        evo_check = 80
+        self.evo_check = 80
 
 
 class Alcoholic_Functioning(Adult_Functioning):
 
     def __init__(self, name, occupation, hobby):
         super().__init__(name, occupation, hobby)
-        evo_check = 80
+        self.evo_check = 80
 
 
 class Oldster(Alcoholic_Functioning):
 
     def __init__(self, name, occupation, hobby):
         super().__init__(name, occupation, hobby)
-        evo_check = 80
+        self.evo_check = 80
 
     def derp(self):
         self.incr_action_count(1)
@@ -236,4 +240,4 @@ class Demented_Old_Bat(Oldster):
 
     def __init__(self, name, occupation, hobby):
         super().__init__(name, occupation, hobby)
-        evo_check = 80
+        self.evo_check = 80
