@@ -5,17 +5,16 @@ import tablesOfStuff as table
 class Person:
 
     evo_stage = 0
-    class_token = 0
     action_count = 0
     
     def __init__(self, name, occupation, hobby):
         self.name = name
         self.occupation = occupation
         self.hobby = [hobby.lower()]
+        class_token = 0
 
     def __init_subclass__(cls):
         cls.evo_stage += 1
-        cls.class_token = 0
     
     def add_hobby(self, new_hobby):
         if new_hobby.lower() not in self.hobby:
@@ -47,31 +46,31 @@ class Person:
 class Infant(Person):
     
     def cry(self):
-        self.__class__.incr_class_token(self, 5)
-        self.__class__.incr_action_count(self, 1)
+        self.incr_class_token(5)
+        self.incr_action_count(1)
         print("""
             Uwwaaaahhhh!
         """)
     
     def wail(self):
-        self.__class__.incr_class_token(self, 7)
-        self.__class__.incr_action_count(self, 1)
+        self.incr_class_token(7)
+        self.incr_action_count(1)
         print("""
             UWWAAAAAAAH!
         """)
 
     def shits_and_giggles(self):
         if randint(0, self.__class__.class_token*2) > self.__class__.class_token:
-            self.__class__.incr_class_token(10)
-            self.__class__.incr_action_count(2)
+            self.incr_class_token(10)
+            self.incr_action_count(2)
             print(f"""
             *UWWWAAAHEUPFFFRRRTTTT!*
             How does {self.hobby[0]} all day make {self.name}
             produce shit with this colour?
             """)
         else:
-            self.__class__.incr_class_token(10)
-            self.__class__.incr_action_count(3)
+            self.incr_class_token(10)
+            self.incr_action_count(3)
             print(f"""
             UWWWAAAHEURFBLEURFPFFFRRRTTTT!
             It ain't fun 'til it comes out
@@ -81,11 +80,15 @@ class Infant(Person):
 
 class Toddler(Infant):
     
+    def __init__(self, name, occupation, hobby):
+        super().__init__(name, occupation, hobby)
+        evo_check = 80
+
     bribed = 0
 
     def bribe_with_choc(self):
-        self.__class__.incr_class_token(10)
-        self.__class__.incr_action_count(1)
+        self.incr_class_token(10)
+        self.incr_action_count(1)
         self.bribed += 1
         print(f"""
         You give {self.name}
@@ -94,24 +97,25 @@ class Toddler(Infant):
         """)
 
     def tickles(self):
-        self.__class__.incr_class_token(3)
-        self.__class__.incr_action_count(1)
+        self.incr_class_token(3)
+        self.incr_action_count(1)
         print("""
-        Teehee""")
+        Teehee
+        """)
 
     #Shits and giggles
     def shits_and_giggles(self):
         if (randint(0, self.__class__.class_token*2) > self.__class__.class_token) and self.__class__.bribed < 3:
-            self.__class__.incr_class_token(5)
-            self.__class__.incr_action_count(2)
+            self.incr_class_token(5)
+            self.incr_action_count(2)
             print(f"""
             *UWWWAAAHEUPFFFRRRTTTT!*
             How does {self.hobby[0]} all day make {self.name}
             produce shit with this colour?
             """)
         elif self.__class__.bribed >= 2:
-            self.__class__.incr_class_token(7)
-            self.__class__.incr_action_count(3)
+            self.incr_class_token(7)
+            self.incr_action_count(3)
             print(f"""
             UWWWAAAHEURFBLEURFPFFFRRRTTTT!
             It ain't fun 'til it comes out
@@ -125,8 +129,12 @@ class Toddler(Infant):
 
 class Kid(Toddler):
 
+    def __init__(self, name, occupation, hobby):
+        super().__init__(name, occupation, hobby)
+        evo_check = 80
+
     def talk(self):
-        self.__class__.incr_action_count(5)
+        self.incr_action_count(5)
         print(f"""
         The {choice(table.animals_table).lower()} in {choice(table.table_of_places)} are {choice(table.adjectives_table)}.
         
@@ -136,14 +144,14 @@ class Kid(Toddler):
         """)
     
     def talk_some_more(self):
-        self.__class__.incr_action_count(5)
+        self.incr_action_count(5)
         print(f"""
         Give. Me. {choice(table.animals_table).capitalize()}.
         GIVE. ME. {choice(table.animals_table).upper()}!
         """)
     
     def rational_Kid(self):
-        self.__class__.incr_action_count(5)
+        self.incr_action_count(5)
         print(f"""
         All the {choice(table.adjectives_table)} {choice(table.animals_table).lower()}
         - in {choice(table.table_of_places)} -
@@ -152,10 +160,14 @@ class Kid(Toddler):
 
 
 class EmoTeen(Kid):
-   
+
+    def __init__(self, name, occupation, hobby):
+        super().__init__(name, occupation, hobby)
+        evo_check = 80
+
     def cry(self):
-        self.__class__.incr_class_token(self, 5)
-        self.__class__.incr_action_count(self, 2)
+        self.incr_class_token(5)
+        self.incr_action_count(2)
         print(f"""
         *{self.name} starts installing a tripod
          - This fucker is readying a web-cam - *
@@ -178,8 +190,8 @@ class EmoTeen(Kid):
         return output
 
     def teen_responds_to_important_things(self):
-        self.__class__.incr_class_token(5)
-        self.__class__.incr_action_count(2)
+        self.incr_class_token(5)
+        self.incr_action_count(2)
         print(f"""
         Who even ARE YOU?!
 
@@ -189,26 +201,39 @@ class EmoTeen(Kid):
 
 class Youth(EmoTeen):
     
-    def __init__(self, name, occupation, hobby, cigarettes):
+    def __init__(self, name, occupation, hobby):
         super().__init__(name, occupation, hobby)
-        self.cigarettes = int(cigarettes)
+        evo_check = 80
 
 
 class Adult_Functioning(Youth):
-    pass
+
+    def __init__(self, name, occupation, hobby):
+        super().__init__(name, occupation, hobby)
+        evo_check = 80
 
 
 class Alcoholic_Functioning(Adult_Functioning):
-    pass
+
+    def __init__(self, name, occupation, hobby):
+        super().__init__(name, occupation, hobby)
+        evo_check = 80
 
 
 class Oldster(Alcoholic_Functioning):
-    
+
+    def __init__(self, name, occupation, hobby):
+        super().__init__(name, occupation, hobby)
+        evo_check = 80
+
     def derp(self):
-        self.__class__.action_count += 1
-        self.__class__.class_token += 1
+        self.incr_action_count(1)
+        self.incr_class_token(1)
         print("What? Nothing.")
 
 
 class Demented_Old_Bat(Oldster):
-    pass
+
+    def __init__(self, name, occupation, hobby):
+        super().__init__(name, occupation, hobby)
+        evo_check = 80
