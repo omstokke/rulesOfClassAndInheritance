@@ -46,8 +46,6 @@ player.decrease_action_count(3)
 
 #Function for converting age into stupid ways of saying numbers
 
-# Kid : Talking function with tables
-# Teens: Tables - "Who even are you?" and "Don't you know what [horses] in [Batu] are [thirsty] due to [covid-19]?"
 # Adult: [You know...] I [read]/[made a collage of] [the Wheel of Time] once. It had [horses] in it.
 # Adult: *stares emptily* ... What?
 # Adult: derps
