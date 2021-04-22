@@ -7,50 +7,50 @@ class Person:
     evo_stage = 0
     action_count = 0
     
-    def __init__(self, name, occupation, hobby):
+    def __init__(self, name, occupation, hobby): #For every new instance, this happens
         self.name = name
         self.occupation = occupation
-        self.hobby = [hobby.lower()]
+        self.hobby = hobby
         self.evo_points = 0
         self.evo_check = 50
 
-    def __init_subclass__(cls):
+    def __init_subclass__(cls): #For every new subclass(not instance), this happens
         cls.evo_stage += 1
-    
-    def add_hobby(self, new_hobby):
-        if new_hobby.lower() not in self.hobby:
-            self.hobby.append(new_hobby.lower())
-    
-    def remove_hobby(self, old_hobby):
-        if old_hobby.lower() in self.hobby:
-            self.hobby.remove(old_hobby.lower())
 
     def incr_evo_points(self, amount):
         self.evo_points += amount
-        if self.evo_points >= self.evo_check:
-            print(self.__class__.subclasses())
+        self.evolve()
 
     def incr_action_count(self, amount):
         self.__class__.action_count += amount
-    
+        self.evolve()
+
+    def evolve(self):
+        if self.evo_points >= self.evo_check or self.action_count >= self.evo_stage * 10:
+            choice = input(f"Would you like for {self.name} to evolve into a {self.__class__.__subclasses__()[0].__name__}? y/n: ").lower()
+            if choice == "y":
+                self.__class__ = self.__class__.__subclasses__()[0]
+                return self.__class__.__init__(self, self.name, self.occupation, self.hobby)
+            else:
+                print("Well, whatever you chose - It wasn't 'y'")
+        
     def decrease_evo_points(self, amount):
         self.evo_points -= amount
 
     def decrease_action_count(self, amount):
         self.__class__.action_count -= amount
-    
+
     #Alternative constructor from array-list
     @classmethod
     def from_list(cls, personlist):
         name, occupation, hobby = personlist
         return cls(name, occupation, hobby)
 
-
 class Infant(Person):
 
     def __init__(self, name, occupation, hobby):
         super().__init__(name, occupation, hobby)
-        self.evo_check += 1 #Ups the limit for evolution
+        self.evo_check += 10 #Ups the limit for evolution
         
     def cry(self):
         self.incr_evo_points(5)
@@ -72,7 +72,7 @@ class Infant(Person):
             self.incr_action_count(2)
             print(f"""
             *UWWWAAAHEUPFFFRRRTTTT!*
-            How does {self.hobby[0]} all day make {self.name}
+            How does {self.hobby} all day make {self.name}
             produce shit with this colour?
             """)
         else:
@@ -89,7 +89,7 @@ class Toddler(Infant):
     
     def __init__(self, name, occupation, hobby):
         super().__init__(name, occupation, hobby)
-        self.evo_check = 80
+        self.evo_check += 10
         self.bribed = 0
     
 
@@ -117,7 +117,7 @@ class Toddler(Infant):
             self.incr_action_count(2)
             print(f"""
             *UWWWAAAHEUPFFFRRRTTTT!*
-            How does {self.hobby[0]} all day make {self.name}
+            How does {self.hobby} all day make {self.name}
             produce shit with this colour?
             """)
         elif self.__class__.bribed >= 2:
@@ -138,7 +138,7 @@ class Kid(Toddler):
 
     def __init__(self, name, occupation, hobby):
         super().__init__(name, occupation, hobby)
-        self.evo_check = 80
+        self.evo_check += 10
 
     def talk(self):
         self.incr_action_count(5)
@@ -170,7 +170,7 @@ class EmoTeen(Kid):
 
     def __init__(self, name, occupation, hobby):
         super().__init__(name, occupation, hobby)
-        self.evo_check = 80
+        self.evo_check += 10
 
     def cry(self):
         self.incr_evo_points(5)
@@ -210,28 +210,28 @@ class Youth(EmoTeen):
     
     def __init__(self, name, occupation, hobby):
         super().__init__(name, occupation, hobby)
-        self.evo_check = 80
+        self.evo_check += 10
 
 
 class Adult_Functioning(Youth):
 
     def __init__(self, name, occupation, hobby):
         super().__init__(name, occupation, hobby)
-        self.evo_check = 80
+        self.evo_check += 10
 
 
 class Alcoholic_Functioning(Adult_Functioning):
 
     def __init__(self, name, occupation, hobby):
         super().__init__(name, occupation, hobby)
-        self.evo_check = 80
+        self.evo_check += 10
 
 
 class Oldster(Alcoholic_Functioning):
 
     def __init__(self, name, occupation, hobby):
         super().__init__(name, occupation, hobby)
-        self.evo_check = 80
+        self.evo_check += 10
 
     def derp(self):
         self.incr_action_count(1)
@@ -243,4 +243,4 @@ class Demented_Old_Bat(Oldster):
 
     def __init__(self, name, occupation, hobby):
         super().__init__(name, occupation, hobby)
-        self.evo_check = 80
+        self.evo_check += 10
