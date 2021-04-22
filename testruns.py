@@ -1,8 +1,21 @@
 from personClasses import *
 
 personlist = ["Ole Martin", "Asshat", "Laughing"]
+personlist2 = ["Snurre Sprett", "Wonkyballs", "Derping"]
+personlist3 = ["Mogens", "Wonkyballs", "Derping"]
 
-player = EmoTeen.from_list(personlist)
+player = Infant.from_list(personlist)
 
-print(player.dumb_response_converter("Go get a haircut"))
-player.teen_responds_to_important_things()
+print(f"""
+{player.__class__.__dict__}
+{player.__dict__}
+{player.__class__.__name__}
+""")
+
+player.incr_evo_points(60)
+
+print(f"""
+{player.__class__.__dict__}
+{player.__dict__}
+{player.__class__.__name__}
+""")

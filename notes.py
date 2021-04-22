@@ -2,8 +2,9 @@
 # Status-check
 
 print(f"""
+{player.__class__.__dict__}
 {player.__dict__}
-{player.__class__}
+{player.__class__.__name__}
 
 Evo-stage: {player.evo_stage}
 Class-token: {player.class_token}
@@ -14,37 +15,43 @@ Occupation: {player.occupation}
 Hobby/-ies: {player.hobby}
 """)
 
-# as Person:
+# Fetches the next class in a linear evolution - One link/stage only
+for subclass in player.__class__.__subclasses__():
+    print(subclass.__name__)
 
-player.add_hobby("Hackysack")
-player.incr_action_count(5)
-player.incr_class_token(5)
+#Lists all the following subclasses of a given class
+def all_subclasses(input_class):
+    list_of_classes = [input_class]
+    class_count = 0
+    while class_count < len(list_of_classes):
+        list_of_classes += list_of_classes[class_count].__subclasses__()
+        class_count += 1
+    return list_of_classes
 
-player.remove_hobby("Hackysack")
-player.decrease_class_token(2)
-player.decrease_action_count(3)
+for a_class in all_subclasses(Person):
+    print(a_class.__name__)
 
+print("""
+----------------------------------------------------------
+""")
 
-    #Can I create a class method for evolving
-    # to the next subclass, given a dict o.s.
-    # with key-value evo_stage: Subclass?
+#Lists the previous baseclass - One link/stage only
+for baseclass in player.__class__.__bases__:
+    print(baseclass.__name__)
 
-    @classmethod
-    def evolve(self):
-        0: Person
-        1: Infant
-        2: Toddler
-        3: Kid
-        4: Tween
-        5: Youth
-        6: Adult_Functioning
-        7: Alcoholic_Functioning
-        8: Oldster
-        9: Demented_Old_Bat
-        #finds the current stage and sets an instance of the next stage
-        pass
+#Lists all the previous baseclasses of a given class
+def all_baseclasses(input_class):
+    list_of_classes = [input_class]
+    class_count = 0
+    while class_count < len(list_of_classes):
+        list_of_classes += list_of_classes[class_count].__bases__
+        class_count += 1
+    list_of_classes.pop() #Last one will always be 'object'
+    return list_of_classes
 
-#Function for converting age into stupid ways of saying numbers
+for a_class in all_baseclasses(Demented_Old_Bat):
+    print(a_class.__name__)
+
 
 # Adult: [You know...] I [read]/[made a collage of] [the Wheel of Time] once. It had [horses] in it.
 # Adult: *stares emptily* ... What?
