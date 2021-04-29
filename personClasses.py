@@ -1,18 +1,19 @@
 from random import randint #Equal dist., don't feed it kwargs directly
 from random import choice
-import tablesOfStuff as table
+import personTables as table
 
 class Person:
 
     evo_stage = 0
     action_count = 0
     
-    def __init__(self, name, occupation, hobby): #For every new instance, this happens
+    def __init__(self, name, hobby): #For every new instance, this happens
         self.name = name
-        self.occupation = occupation
         self.hobby = hobby
         self.evo_points = 0
         self.evo_check = 50
+        self.functionlist = [method for method in dir(self.__class__)
+        if callable(getattr(self.__class__, method)) and method not in dir(Person)]
 
     def __init_subclass__(cls): #For every new subclass(not instance), this happens
         cls.evo_stage += 1
@@ -27,13 +28,26 @@ class Person:
 
     def evolve(self):
         if self.evo_points >= self.evo_check or self.action_count >= self.evo_stage * 10:
-            choice = input(f"Would you like for {self.name} to evolve into a {self.__class__.__subclasses__()[0].__name__}? y/n: ").lower()
-            if choice == "y":
-                self.__class__ = self.__class__.__subclasses__()[0]
-                return self.__class__.__init__(self, self.name, self.occupation, self.hobby)
+            subclass_list = self.__class__.__subclasses__()
+            if len(subclass_list) == 1:
+                choice = input(f"\n    Would you like for {self.name} to evolve into a {subclass_list[0].__name__}? y/n: ").lower()
+                if choice == "y":
+                    self.__class__ = subclass_list[0]
+                    return self.__class__.__init__(self, self.name, self.hobby)
+                else:
+                    print("Well, whatever you chose - It wasn't 'y'")
+            elif len(subclass_list) == 0:
+                pass
             else:
-                print("Well, whatever you chose - It wasn't 'y'")
-        
+                for sub in subclass_list:
+                    print(f"{sub.__name__}: {subclass_list.index(sub)}")
+                choice = int(input("Choose your next evolutionary step from the numbers given above, or (n)ot to evolve: "))
+                if choice in range(len(subclass_list)):
+                    self.__class__ = subclass_list[choice]
+                    return self.__class__.__init__(self, self.name, self.hobby)
+                else:
+                    print("Well, whatever you chose - It wasn't one of the numbers listed")
+
     def decrease_evo_points(self, amount):
         self.evo_points -= amount
 
@@ -43,149 +57,149 @@ class Person:
     #Alternative constructor from array-list
     @classmethod
     def from_list(cls, personlist):
-        name, occupation, hobby = personlist
-        return cls(name, occupation, hobby)
+        name, hobby = personlist
+        return cls(name, hobby)
+
 
 class Infant(Person):
 
-    def __init__(self, name, occupation, hobby):
-        super().__init__(name, occupation, hobby)
+    def __init__(self, name, hobby):
+        super().__init__(name, hobby)
         self.evo_check += 10 #Ups the limit for evolution
         
     def cry(self):
+        print("""
+    Uwwaaaahhhh!
+        """)
+        self.incr_action_count(1)
         self.incr_evo_points(5)
-        self.incr_action_count(1)
-        print("""
-            Uwwaaaahhhh!
-        """)
-    
-    def wail(self):
-        self.incr_evo_points(7)
-        self.incr_action_count(1)
-        print("""
-            UWWAAAAAAAH!
-        """)
+
 
     def shits_and_giggles(self):
         if randint(0, self.evo_points*2) > self.evo_points:
+            print(f"""
+    *UWWWAAAHEUPFFFRRRTTTT!*
+    How does {self.hobby.lower()} all day make {self.name}
+    produce shit with this colour?
+            """)
             self.incr_evo_points(10)
             self.incr_action_count(2)
-            print(f"""
-            *UWWWAAAHEUPFFFRRRTTTT!*
-            How does {self.hobby} all day make {self.name}
-            produce shit with this colour?
-            """)
         else:
-            self.incr_evo_points(10)
-            self.incr_action_count(3)
             print(f"""
-            UWWWAAAHEURFBLEURFPFFFRRRTTTT!
-            It ain't fun 'til it comes out
-            ...of both ends.
-            {self.name} smells like a tired alcoholic""")  
+    UWWWAAAHEURFBLEURFPFFFRRRTTTT!
+    It ain't fun 'til it comes out
+    ...of both ends.
+    {self.name} smells like a tired alcoholic
+            """)
+            self.incr_evo_points(10)
+            self.incr_action_count(3) 
 
 
 class Toddler(Infant):
     
-    def __init__(self, name, occupation, hobby):
-        super().__init__(name, occupation, hobby)
+    def __init__(self, name, hobby):
+        super().__init__(name, hobby)
         self.evo_check += 10
         self.bribed = 0
-    
+        self.functionlist.remove('cry')
+
 
     def bribe_with_choc(self):
-        self.incr_evo_points(10)
-        self.incr_action_count(1)
         self.bribed += 1
         print(f"""
-        You give {self.name}
-        half a chocolate:
-        'Choclet!'
+    You give {self.name} half a chocolate:
+    'Choclet!'
         """)
-
-    def tickles(self):
-        self.incr_evo_points(3)
+        self.incr_evo_points(10)
         self.incr_action_count(1)
-        print("""
-        Teehee
-        """)
 
-    #Shits and giggles
+
     def shits_and_giggles(self):
         if (randint(0, self.evo_points*2) > self.evo_points) and self.bribed < 3:
+            print(f"""
+    *UWWWAAAHEUPFFFRRRTTTT!*
+    How does {self.hobby.lower()} all day make {self.name}
+    produce shit with this colour?
+            """)
             self.incr_evo_points(5)
             self.incr_action_count(2)
+        elif self.bribed >= 2:
             print(f"""
-            *UWWWAAAHEUPFFFRRRTTTT!*
-            How does {self.hobby} all day make {self.name}
-            produce shit with this colour?
-            """)
-        elif self.__class__.bribed >= 2:
+    UWWWAAAHEURFBLEURFPFFFRRRTTTT!
+    It ain't fun 'til it comes out
+    ...of both ends.
+    {self.name} smells like a tired alcoholic""")
             self.incr_evo_points(7)
             self.incr_action_count(3)
-            print(f"""
-            UWWWAAAHEURFBLEURFPFFFRRRTTTT!
-            It ain't fun 'til it comes out
-            ...of both ends.
-            {self.name} smells like a tired alcoholic""") 
         else:
             print("""
-            Shit in, shit out - Give it the Stuff of Sugar!
+    Shit in, shit out - Give it the Stuff of Sugar!
             """)  
 
 
 class Kid(Toddler):
 
-    def __init__(self, name, occupation, hobby):
-        super().__init__(name, occupation, hobby)
+    def __init__(self, name, hobby):
+        super().__init__(name, hobby)
         self.evo_check += 10
+        self.functionlist.remove('bribe_with_choc')
+        self.functionlist.remove('shits_and_giggles')
+
 
     def talk(self):
-        self.incr_action_count(5)
         print(f"""
-        The {choice(table.animals_table).lower()} in {choice(table.table_of_places)} are {choice(table.adjectives_table)}.
+    The {choice(table.animals_table).lower()} in {choice(table.table_of_places)} are {choice(table.adjectives_table)}.
         
-        ...
+    ...
         
-        I like {choice(table.animals_table).lower()}!
+    I like {choice(table.animals_table).lower()}!
         """)
+        self.incr_action_count(1)
     
     def talk_some_more(self):
-        self.incr_action_count(5)
         print(f"""
-        Give. Me. {choice(table.animals_table).capitalize()}.
-        GIVE. ME. {choice(table.animals_table).upper()}!
+    Give. Me. {choice(table.animals_table).capitalize()}.
+    GIVE. ME. {choice(table.animals_table).upper()}!
         """)
+        self.incr_action_count(1)
     
     def rational_Kid(self):
-        self.incr_action_count(5)
         print(f"""
-        All the {choice(table.adjectives_table)} {choice(table.animals_table).lower()}
-        - in {choice(table.table_of_places)} -
-        they're mine now.
+    All the {choice(table.adjectives_table)} {choice(table.animals_table).lower()}
+    - in {choice(table.table_of_places)} -
+    they're mine now.
         """)
+        self.incr_action_count(1)
 
 
 class EmoTeen(Kid):
 
-    def __init__(self, name, occupation, hobby):
-        super().__init__(name, occupation, hobby)
+    def __init__(self, name, hobby):
+        super().__init__(name, hobby)
         self.evo_check += 10
+        self.functionlist.remove('talk')
+        self.functionlist.remove('talk_some_more')
+        self.functionlist.remove('rational_Kid')
+        self.functionlist.append('cry')
+        self.functionlist.sort()
+        
 
     def cry(self):
+        print(f"""
+    *{self.name} starts installing a tripod
+     - This fucker is readying a web-cam - *
+    No wounds can match the hurt inside!
+    Shallow cuts only makes me cry-e-yee
+    Cruel, world - Goodbyeeee!
+    Uwwaaaahhhh!
+     - What a cunt -
+        """)
         self.incr_evo_points(5)
         self.incr_action_count(2)
-        print(f"""
-        *{self.name} starts installing a tripod
-         - This fucker is readying a web-cam - *
-        No wounds can match the hurt inside!
-        Shallow cuts only makes me cry-e-yee
-        Cruel, world - Goodbyeeee!
-        Uwwaaaahhhh!
-         - What a cunt -
-        """)
 
-    def dumb_response_converter(self, message):
+    def dumb_response(self):
+        message = input(f"""
+    Command {self.name} what to do: """)
         output = "No - You "
         for char in message:
             if char == " ":
@@ -194,53 +208,96 @@ class EmoTeen(Kid):
                 output += char.lower()
             else:
                 output += char.upper()
-        return output
+        print(f"""
+    {output}!
+        """)
+        self.incr_evo_points(5)
+        self.incr_action_count(1)
 
-    def teen_responds_to_important_things(self):
+    def important_things(self):
+        print(f"""
+    Who even ARE YOU?! 
+    Don't you know that {choice(table.animals_table).lower()} in {choice(table.smartass_table)} are {choice(table.adjectives_table2)} due to {choice(table.table_of_bad_things)}?
+        """)
         self.incr_evo_points(5)
         self.incr_action_count(2)
-        print(f"""
-        Who even ARE YOU?!
-
-        Don't you know that {choice(table.animals_table).lower()} in {choice(table.smartass_table)} are {choice(table.adjectives_table2)} due to {choice(table.table_of_bad_things)}?
-        """)
 
 
 class Youth(EmoTeen):
     
-    def __init__(self, name, occupation, hobby):
-        super().__init__(name, occupation, hobby)
+    def __init__(self, name, hobby):
+        super().__init__(name, hobby)
         self.evo_check += 10
+        self.derp_count = 0
+        self.functionlist.remove('cry')
+        self.functionlist.remove('dumb_response')
 
 
-class Adult_Functioning(Youth):
-
-    def __init__(self, name, occupation, hobby):
-        super().__init__(name, occupation, hobby)
-        self.evo_check += 10
-
-
-class Alcoholic_Functioning(Adult_Functioning):
-
-    def __init__(self, name, occupation, hobby):
-        super().__init__(name, occupation, hobby)
-        self.evo_check += 10
-
-
-class Oldster(Alcoholic_Functioning):
-
-    def __init__(self, name, occupation, hobby):
-        super().__init__(name, occupation, hobby)
-        self.evo_check += 10
+    def important_things(self):
+        print(f"""
+    Did you know that {choice(table.animals_table).lower()} in {choice(table.smartass_table)} are {choice(table.adjectives_table2)} due to {choice(table.table_of_bad_things)}?
+        """)
+        self.incr_evo_points(5)
+        self.incr_action_count(1)
 
     def derp(self):
+        self.derp_count += 1
+        derp_hit = randint(0, self.derp_count)
+        if derp_hit == self.derp_count:
+            print(f"""
+    {choice(table.small_table)}
+        """)
+        else:
+            print("""
+    What? Nothing.
+        """)
+        self.incr_evo_points(10)
         self.incr_action_count(1)
-        self.incr_evo_points(1)
-        print("What? Nothing.")
+        
 
+class Adult(Youth):
 
-class Demented_Old_Bat(Oldster):
-
-    def __init__(self, name, occupation, hobby):
-        super().__init__(name, occupation, hobby)
+    def __init__(self, name, hobby):
+        super().__init__(name, hobby)
         self.evo_check += 10
+        self.derp_count = 0
+        
+
+    def derp(self):
+        self.derp_count += 1
+        derp_hit = randint(0, self.derp_count)
+        if derp_hit == self.derp_count:
+            print(f"""
+    {choice(table.small_table)}
+        """)
+        else:
+            print(f"""
+    *{self.name} stares off into the distance*
+        ....
+            ....
+                ....
+                    
+                    What?            
+            """)
+        self.incr_evo_points(10)
+        self.incr_action_count(1)
+
+
+class Oldster(Adult):
+
+    def __init__(self, name, hobby):
+        super().__init__(name, hobby)
+        self.evo_check += 10
+        self.functionlist.remove('important_things')
+
+    def derp(self):
+        print(f"""
+        {choice(table.animals_table)} are {choice(table.adjectives_table)}!
+        {choice(table.adjectives_table).capitalize()} and {choice(table.adjectives_table)} and {choice(table.adjectives_table)}!
+        But some {choice(table.animals_table).lower()} are {choice(table.adjectives_table)}.
+        Also - In {choice(table.smartass_table)}...
+        {choice(table.small_table)}
+        {choice(table.animals_table).upper()}!!!
+        """)
+        self.incr_evo_points(10)
+        self.incr_action_count(1)
