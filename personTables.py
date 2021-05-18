@@ -1,5 +1,11 @@
 from random import choice
 
+#this module is a collection of lists used in instance-methods of personClasses
+#the purpose of which is to demonstrate how the random.choice()-function works
+# in print-statements using f-strings
+
+#Also because I had some fun with the statements - Helps learning things quicker
+
 animals_table = [
         "Elephants",
         "Dogs",
@@ -29,6 +35,7 @@ adjectives_table = [
         "good"
         ]
 
+#Think smart-ass emo kid, circa 16 and an active Reddit-feed
 adjectives_table2 = [
         "thirsty",
         "dying",
@@ -61,6 +68,7 @@ table_of_places = [
         "the cave where they found me"
         ]
 
+#Ref. Reddit-feed mentioned above
 smartass_table = [
         "Batu",
         "the fjords of Austria",
@@ -88,6 +96,8 @@ table_of_bad_things = [
         "bad haircuts in Ukraine diminishing their returns on their annual people/vegetable-ratio"
         ]
 
+#Wanted to see if it made any sense referencing a list inside a list using an f-string.
+#It did.
 small_table = [
         "...You got any money?",
         "I need some food I could trade for beers",
@@ -95,4 +105,4 @@ small_table = [
         f"I need some... {choice(adjectives_table).lower()} {choice(animals_table).lower()}",
         "I prefer boxes over chairs",
         "My body cleans itself, thank you"
-]
+        ]

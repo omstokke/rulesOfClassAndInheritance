@@ -2,43 +2,50 @@ from random import randint #Equal dist., don't feed it kwargs directly
 from random import choice
 import personTables as table
 
+#this is the base/abstract class
 class Person:
 
+    #The Person Sim follows a stricthierarchy of class-progression, so I used the opportunity to track certain properties
+    # as class-attributes, and others as instance-attributes
+    # These keep track of which evolutionary stage in the class-hierarchy the simulation-instance (player) is at
+    # and counts how many actions it has taken during the total course of its evolution, across classes
     evo_stage = 0
     action_count = 0
     
+    #Constructor
     def __init__(self, name, hobby): #For every new instance, this happens
         self.name = name
         self.hobby = hobby
         self.evo_points = 0
-        self.evo_check = 50
-        self.functionlist = [method for method in dir(self.__class__)
-        if callable(getattr(self.__class__, method)) and method not in dir(Person)]
+        self.evo_check = 50                                                             #This creates the limit of evo-points/EXP to check for before evolving (see evolve-method, below)
+        self.functionlist = [method for method in dir(self.__class__)                   #This constructs the "menu" for choosing actions in the simulator
+        if callable(getattr(self.__class__, method)) and method not in dir(Person)]     # but it removes the "abstract"-methods from the Person-class
 
-    def __init_subclass__(cls): #For every new subclass(not instance), this happens
+    def __init_subclass__(cls): #For every new subclass(not instance), the evo_stage-counter is updater with a +1
         cls.evo_stage += 1
 
     def incr_evo_points(self, amount):
-        self.evo_points += amount
-        self.evolve()
+        self.evo_points += amount       #This functions adds evo_points/EXP and
+        self.evolve()                   #runs the function to check for whether the instance should evolve to the next class or not
 
     def incr_action_count(self, amount):
-        self.__class__.action_count += amount
-        self.evolve()
+        self.__class__.action_count += amount   # This functions adds action counts, and
+        self.evolve()                           # runs the function to check for whether the instance should evolve to the next class or not
 
+    #This is the method that lets the instance evolve, seemingless without creating a new instance (not necessarily true, but it looks seamless)
     def evolve(self):
-        if self.evo_points >= self.evo_check or self.action_count >= self.evo_stage * 10:
-            subclass_list = self.__class__.__subclasses__()
-            if len(subclass_list) == 1:
+        if self.evo_points >= self.evo_check or self.action_count >= self.evo_stage * 10:   # Checks if the instance has acquired enough EXP or action counts
+            subclass_list = self.__class__.__subclasses__()                                 # Finds the possible subclasses to inherit the current class of the instance - Yet NOT a class-method
+            if len(subclass_list) == 1:                                                     # If there's only 1 subclass: Ask if you want to evolve into the next class
                 choice = input(f"\n    Would you like for {self.name} to evolve into a {subclass_list[0].__name__}? y/n: ").lower()
                 if choice == "y":
                     self.__class__ = subclass_list[0]
                     return self.__class__.__init__(self, self.name, self.hobby)
                 else:
                     print("Well, whatever you chose - It wasn't 'y'")
-            elif len(subclass_list) == 0:
+            elif len(subclass_list) == 0:                                                   #If there are no further subclasses - Pass
                 pass
-            else:
+            else:                                                                           #If there are several subclass: Ask which one you want to evolve into
                 for sub in subclass_list:
                     print(f"{sub.__name__}: {subclass_list.index(sub)}")
                 choice = int(input("Choose your next evolutionary step from the numbers given above, or (n)ot to evolve: "))
@@ -48,13 +55,15 @@ class Person:
                 else:
                     print("Well, whatever you chose - It wasn't one of the numbers listed")
 
+    #For future development: Methods to decrea evo-points and action counts
+    #Not used in the current version of Person Sim
     def decrease_evo_points(self, amount):
         self.evo_points -= amount
 
     def decrease_action_count(self, amount):
         self.__class__.action_count -= amount
 
-    #Alternative constructor from array-list
+    #Class method: Alternative constructor, creating instance from a list-object
     @classmethod
     def from_list(cls, personlist):
         name, hobby = personlist
@@ -64,23 +73,23 @@ class Person:
 class Infant(Person):
 
     def __init__(self, name, hobby):
-        super().__init__(name, hobby)
-        self.evo_check += 10 #Ups the limit for evolution
+        super().__init__(name, hobby)   #Gets the common instance-attributes from the super
+        self.evo_check += 10            #Ups the limit for evolution by 10 points
         
     def cry(self):
         print("""
     Uwwaaaahhhh!
         """)
-        self.incr_action_count(1)
-        self.incr_evo_points(5)
+        self.incr_action_count(1)       #The acitons count increases are placed before the evo-points as they shouldn't too ofte hit their limit before the evo-points
+        self.incr_evo_points(5)         #The evo-points are allways increased last, as they also call on the evolve-method, making sure the action is completed before evolving
 
 
-    def shits_and_giggles(self):
+    def shits_and_giggles(self):        #Basic function for an infant - Also plays around with the instance-attributes
         if randint(0, self.evo_points*2) > self.evo_points:
             print(f"""
     *UWWWAAAHEUPFFFRRRTTTT!*
     How does {self.hobby.lower()} all day make {self.name}
-    produce shit with this colour?
+    produce anything with this colour?
             """)
             self.incr_evo_points(10)
             self.incr_action_count(2)
@@ -89,7 +98,7 @@ class Infant(Person):
     UWWWAAAHEURFBLEURFPFFFRRRTTTT!
     It ain't fun 'til it comes out
     ...of both ends.
-    {self.name} smells like a tired alcoholic
+    {self.name} smells like a factory
             """)
             self.incr_evo_points(10)
             self.incr_action_count(3) 
@@ -100,8 +109,8 @@ class Toddler(Infant):
     def __init__(self, name, hobby):
         super().__init__(name, hobby)
         self.evo_check += 10
-        self.bribed = 0
-        self.functionlist.remove('cry')
+        self.bribed = 0                 #Instance-specific attribute new from this subclass of Person
+        self.functionlist.remove('cry') #Removes 'cry' from the action-menu
 
 
     def bribe_with_choc(self):
@@ -119,7 +128,7 @@ class Toddler(Infant):
             print(f"""
     *UWWWAAAHEUPFFFRRRTTTT!*
     How does {self.hobby.lower()} all day make {self.name}
-    produce shit with this colour?
+    produce anything with this colour?
             """)
             self.incr_evo_points(5)
             self.incr_action_count(2)
@@ -137,7 +146,7 @@ class Toddler(Infant):
             """)  
 
 
-class Kid(Toddler):
+class Kid(Toddler): #For the most part, this class is used to play around with functions and lists in print-statements
 
     def __init__(self, name, hobby):
         super().__init__(name, hobby)
@@ -174,7 +183,7 @@ class Kid(Toddler):
 
 class EmoTeen(Kid):
 
-    def __init__(self, name, hobby):
+    def __init__(self, name, hobby):        #Redefines the menu alot, also sorts it
         super().__init__(name, hobby)
         self.evo_check += 10
         self.functionlist.remove('talk')
@@ -187,12 +196,12 @@ class EmoTeen(Kid):
     def cry(self):
         print(f"""
     *{self.name} starts installing a tripod
-     - This fucker is readying a web-cam - *
+     - Your subject is readying a web-cam - *
     No wounds can match the hurt inside!
     Shallow cuts only makes me cry-e-yee
     Cruel, world - Goodbyeeee!
     Uwwaaaahhhh!
-     - What a cunt -
+     - What a talented young thing -
         """)
         self.incr_evo_points(5)
         self.incr_action_count(2)
@@ -283,7 +292,7 @@ class Adult(Youth):
         self.incr_action_count(1)
 
 
-class Oldster(Adult):
+class Oldster(Adult): #The last stage
 
     def __init__(self, name, hobby):
         super().__init__(name, hobby)
