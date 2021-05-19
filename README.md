@@ -5,7 +5,7 @@ To run the Person Simulator (alpha) -
  - Modules personTables/-Functions/-Classes are needed
  - Run personSimulation.py
 
-Comments will be added (sorry about that), but a short summary:
+Comments will be amended (sorry about that), but a short summary:
  - This is an exercise in creating classes, and the structures of OOP
  - Everything is written for the sake of trying out a specific aspect of Python3-classes
  - This is not necessarily an exercise in clean code (yet)
